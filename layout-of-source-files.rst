@@ -1,36 +1,28 @@
 ********************************
-Layout of a Solidity Source File
+솔리디티 소스파일 레이아웃
 ********************************
 
-Source files can contain an arbitrary number of contract definitions, include directives
-and pragma directives.
+소스파일에는 지시문과 프라그마 지시문을 포함한 여러개의 컨트랙트를 정의할 수 있습니다.
 
 .. index:: ! pragma, version
 
 .. _version_pragma:
 
-Version Pragma
+버전 프라그마
 ==============
 
-Source files can (and should) be annotated with a so-called version pragma to reject
-being compiled with future compiler versions that might introduce incompatible
-changes. We try to keep such changes to an absolute minimum and especially
-introduce changes in a way that changes in semantics will also require changes
-in the syntax, but this is of course not always possible. Because of that, it is always
-a good idea to read through the changelog at least for releases that contain
-breaking changes, those releases will always have versions of the form
-``0.x.0`` or ``x.0.0``.
+소스파일은 '버전 프라그마'라고 불리는 버전 정보에 대한 주석을 달아야 하는데,
+이는 최신 버전의 컴파일러가 호환되지 않는 방식의 컴파일을 막기 위함입니다.
+우리는 그러한 변화를 절대적으로 최소화하려 노력하고 있으며, 특히 의미 변경이 구문의 변경을 요구하도록 변경 사항을 도입하지만 이것이 항상 가능하지는 않습니다.
+그렇기 때문에 변경 사항이 포함된 릴리즈에 대해서는 ChangeLog를 읽어보는 것이 좋습니다. 그러한 릴리즈에는 항상 ``0.x.0`` 나 ``x.0.0`` 같은 버전 형식이 포함되어 있습니다.
 
-The version pragma is used as follows::
+버전 프라그마는 아래와 같이 사용됩니다.::
 
   pragma solidity ^0.4.0;
 
-Such a source file will not compile with a compiler earlier than version 0.4.0
-and it will also not work on a compiler starting from version 0.5.0 (this
-second condition is added by using ``^``). The idea behind this is that
-there will be no breaking changes until version ``0.5.0``, so we can always
-be sure that our code will compile the way we intended it to. We do not fix
-the exact version of the compiler, so that bugfix releases are still possible.
+위와 같이 작성된 소스파일은 0.4.0 이전 버전의 컴파일러와 호환되지 않으며,
+0.5.0 이상의 버전에서도 컴파일되지 않습니다. (두번째 조건의 버전정보는 ``^``을 사용하여 나타낸다). 이러한 방식은 ``0.5.0``버전까지 큰 변화가 없이 의도하고자 하는 방식으로 코드를 컴파일 할수 있게 합니다. 
+우리는 
 
 It is possible to specify much more complex rules for the compiler version,
 the expression follows those used by `npm <https://docs.npmjs.com/misc/semver>`_.
