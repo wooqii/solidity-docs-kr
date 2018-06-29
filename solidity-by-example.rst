@@ -178,59 +178,58 @@
 .. 색인:: auction;blind, auction;open, blind auction, open auction
 
 *************
-Blind Auction
+비공개 경매
 *************
 
-In this section, we will show how easy it is to create a
-completely blind auction contract on Ethereum.
-We will start with an open auction where everyone
-can see the bids that are made and then extend this
-contract into a blind auction where it is not
-possible to see the actual bid until the bidding
-period ends.
+이번 섹션에서 우리는 완전한 비공개 경매 스마트 컨트랙트를
+이더리움 상에서 쉽게 구현하는 방법을 보여줄 것입니다.
+우선 우리는 모든 사람이 서로의 입찰가를 알 수 있는
+공개 경매부터 시작하여 경매 기한이 종료될 때까지 
+서로의 입찰가를 알 수 없는 비공개 경매로 예제를 확장할 것입니다.
 
 .. _simple_auction:
 
-Simple Open Auction
+단순 공개 경매
 ===================
 
-The general idea of the following simple auction contract
-is that everyone can send their bids during
-a bidding period. The bids already include sending
-money / ether in order to bind the bidders to their
-bid. If the highest bid is raised, the previously
-highest bidder gets her money back.
-After the end of the bidding period, the
-contract has to be called manually for the
-beneficiary to receive his money - contracts cannot
-activate themselves.
+단순 경매 컨트랙트의 일반적인 개념은 모든 이가 
+경매 기간동안 자신의 입찰가를 입력하는 것 입니다.
+이 입찰은 먼저 현금이나 이더를 전송하는 것으로 입찰자가 
+자신의 경매를 되돌릴 수 없게 합니다. 만일 가장 높은 입찰가가 들어온다면, 이전의 최고 입찰가는 입찰자에게 환불 됩니다.  
+입찰 기간이 종료된 후에, 스마트 컨트랙트는 수동으로 호출되어 수혜자에게 돈을 돌려주게 됩니다. - 스마트 컨트랙트는 스스로 활성화할 수 없습니다.
 
 ::
 
     pragma solidity ^0.4.21;
 
     contract SimpleAuction {
-        // Parameters of the auction. Times are either
-        // absolute unix timestamps (seconds since 1970-01-01)
-        // or time periods in seconds.
+        // 경매의 parameter 입니다. 
+        // 시간은 절대 유닉스 타임스탬프 ( 1970-01-01 이후의 초 단위) 입니다.
+        // address 유형의 beneficiary 변수를 public으로 선언했습니다.
         address public beneficiary;
+        // uint 타입의 auctionEnd 변수를 public으로 선언했습니다.
         uint public auctionEnd;
 
-        // Current state of the auction.
+        // 현재 경매의 상태를 나타냅니다.
+        // address 타입의 highestBidder를 public으로 선언하여 가장 높이 입찰한 사람의 주소를 나타냅니다.
         address public highestBidder;
+        // uint 타입의 highestBid를 public으로 선언하여 최고입찰가를 나타냅니다.
         uint public highestBid;
 
-        // Allowed withdrawals of previous bids
+        // 최고입찰가 이전의 입찰가를 인출할 수 있도록 허용합니다.
+        // addrss를 키로 하고 uint를 반환하는 pendingReturns를 맵핑합니다.
         mapping(address => uint) pendingReturns;
 
-        // Set to true at the end, disallows any change
+        // 마지막에 true를 설정하여 변경을 허용하지 않게 합니다.
         bool ended;
 
-        // Events that will be fired on changes.
+        // 특정 변경점이 생길 시 이벤트를 발생시킵니다. 
+        // HighestBidIncreased 라는 이벤트는 address타입의 bidder와 정수타입의 amount를 가진다. 
         event HighestBidIncreased(address bidder, uint amount);
+        // AuctionEnded 라는 이벤트는 address타입의 winner와 정수타입의 amount를 가진다.
         event AuctionEnded(address winner, uint amount);
 
-        // The following is a so-called natspec comment,
+        // 다음의 것은  natspec comment,라고  불린다.
         // recognizable by the three slashes.
         // It will be shown when the user is asked to
         // confirm a transaction.
